@@ -10,7 +10,6 @@ try(library(ggplot2), silent=FALSE)
 
 ### make geom_tile plot of end-point flourescence to represent 384-well plate
 ### required: filename prefix, e.g. "data/csv/2018-02-05 -  End Point Results"
-
 plot_endpoint_fluorescence = function(prefix) {
     
     #read the files
@@ -47,21 +46,21 @@ plot_endpoint_fluorescence = function(prefix) {
         xlab("") +
         ylab("") +
         facet_wrap(~Fluor, ncol=1) +
-        theme(legend.position="none", legend.title = element_blank())
+        theme(legend.position="none")
 }
 
 
 ### make geom_line plot of flourescence vs cycle 
 ### required: filename prefix, e.g. "data/csv/2018-02-05 -  Quantification Amplification Results"
-
 plot_cycle_fluorescence = function(prefix) {
+
     #read the files
     try((FAM = read.csv(paste0(prefix, "_FAM.csv"), header=TRUE)), silent=TRUE)
     try((HEX = read.csv(paste0(prefix, "_HEX.csv"), header=TRUE)), silent=TRUE)
     try((Cy5 = read.csv(paste0(prefix, "_Cy5.csv"), header=TRUE)), silent=TRUE)
     try((Texas_Red = read.csv(paste0(prefix, "_Texas Red.csv"), header=TRUE)), silent=TRUE)
     
-    #make empty df to merge with - df with wells as columns
+    #make empty df to merge with
     qa = data.frame(Cycle = numeric(), Well = character(), RFU = numeric(), Fluor=character())
     
     #check if individual dfs exists and merge
@@ -89,10 +88,7 @@ plot_cycle_fluorescence = function(prefix) {
 ### plot standards - quantity vs cq; generate lm 
 ### required: data frame 
 
-plot_stds_lm = function(df) {
-    
-    
-    
+
     
     
     
