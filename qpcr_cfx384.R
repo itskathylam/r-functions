@@ -3,11 +3,15 @@
 #           Fluors: FAM, HEX, Cy5, Texas Red            
 
 
-### make geom_tile plot of end-point flourescence from filename prefix
+#libraries
+try(library(tidyverse), silent=FALSE)
+try(library(ggplot2), silent=FALSE)
+
+
+### make geom_tile plot of end-point flourescence to represent 384-well plate
+### required: filename prefix, e.g. "data/csv/2018-02-05 -  End Point Results"
+
 plot_endpoint_fluorescence = function(prefix) {
-    
-    #libraries
-    try(library(dplyr), silent=FALSE)
     
     #read the files
     try((fam = read.csv(paste0(prefix, "_FAM.csv"), header=TRUE)), silent=TRUE)
@@ -15,13 +19,15 @@ plot_endpoint_fluorescence = function(prefix) {
     try((cy = read.csv(paste0(prefix, "_Cy5.csv"), header=TRUE)), silent=TRUE)
     try((tr = read.csv(paste0(prefix, "_Texas Red.csv"), header=TRUE)), silent=TRUE)
     
-    #check if individual dfs exists and combine into single df
+    #make empty df to merge with
     ep=data.frame(X=character(), Well=character(), Fluor=character(), Target=character(), 
                   Content=character(), Sample=character(), End.RFU=numeric(), Call=character(), 
                   Sample.Type=character(), CallType=character(), IsControl=character())
+    
+    #check if individual dfs exists and merge
     df_names = c("fam", "hex", "cy", "tr")
     for (df in df_names){
-        if (exists(df)) {
+        if (exists(df)) {  #nb object passed to exists require quotes
             ep = bind_rows(ep, get(df))
         }
     }
@@ -41,6 +47,73 @@ plot_endpoint_fluorescence = function(prefix) {
         xlab("") +
         ylab("") +
         facet_wrap(~Fluor, ncol=1) +
-        theme(legend.position="right", legend.title = element_blank())
+        theme(legend.position="none", legend.title = element_blank())
 }
 
+
+### make geom_line plot of flourescence vs cycle 
+### required: filename prefix, e.g. "data/csv/2018-02-05 -  Quantification Amplification Results"
+
+plot_cycle_fluorescence = function(prefix) {
+    #read the files
+    try((FAM = read.csv(paste0(prefix, "_FAM.csv"), header=TRUE)), silent=TRUE)
+    try((HEX = read.csv(paste0(prefix, "_HEX.csv"), header=TRUE)), silent=TRUE)
+    try((Cy5 = read.csv(paste0(prefix, "_Cy5.csv"), header=TRUE)), silent=TRUE)
+    try((Texas_Red = read.csv(paste0(prefix, "_Texas Red.csv"), header=TRUE)), silent=TRUE)
+    
+    #make empty df to merge with - df with wells as columns
+    qa = data.frame(Cycle = numeric(), Well = character(), RFU = numeric(), Fluor=character())
+    
+    #check if individual dfs exists and merge
+    df_names = c("FAM", "HEX", "Cy5", "Texas_Red")
+    for (df in df_names){
+        if (exists(df)) {  #nb object passed to exists require quotes
+            fluor = df
+            df = select(get(df), -X)
+            df = melt(df, id.vars="Cycle")
+            df$Fluor = rep(fluor, length(df$Cycle)) 
+            names(df) = c("Cycle", "Well", "RFU", "Fluor")
+            qa = bind_rows(qa, df)
+        }
+    }
+    
+    #plot the fluorescence over cycles, facet by fluor
+    ggplot(qa, aes(x=Cycle, y=RFU, group=interaction(Well, Fluor), colour=Fluor)) +
+        geom_line() +
+        facet_wrap(~Fluor) +
+        theme_linedraw(14) +
+        theme(legend.position="none")
+}
+
+
+### plot standards - quantity vs cq; generate lm 
+### required: data frame 
+
+plot_stds_lm = function(df) {
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
