@@ -5,7 +5,6 @@
 
 #libraries
 try(library(tidyverse), silent=FALSE)
-try(library(ggplot2), silent=FALSE)
 
 
 ### make geom_tile plot of end-point flourescence to represent 384-well plate
